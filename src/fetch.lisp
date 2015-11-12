@@ -31,7 +31,7 @@
              (flexi-streams:octets-to-string
               (dex:get (render-uri uri) :force-binary t))
              :as :alist)))
-      (if (aand (assoc-value "ok" response) (print it))
+      (if (aand (assoc-value "ok" response) it)
           response
           (let ((error (assoc-value "error" response)))
             (error "ERROR: ~a" (or error "NO ERROR MESSAGE")))))))
