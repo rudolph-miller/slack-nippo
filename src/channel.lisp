@@ -20,3 +20,10 @@
                 (make-channel :id (assoc-value "id" channel)
                               :name (assoc-value "name" channel)))
             channels)))
+
+(defun get-channel (name)
+  (let ((channels (get-all-channels)))
+    (dolist (channel channels)
+      (when (equal (channel-name channel) name)
+        (return-from get-channel channel)))
+    nil))
