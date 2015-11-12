@@ -24,16 +24,29 @@
   `(progn
      (defclass ,type (md) ())
      (defmethod %format-md ((object ,type))
-       ,@body)))
+       (let ((value (value object)))
+         ,@body))))
 
 (defmd h1
-  (format *stream* "# ~a" (value object)))
+  (format *stream* "# ~a" value))
 
 (defmd h2
-  (format *stream* "## ~a" (value object)))
+  (format *stream* "## ~a" value))
 
 (defmd h3
-  (format *stream* "### ~a" (value object)))
+  (format *stream* "### ~a" value))
+
+(defmd l1
+  (format *stream* "- ~a" value))
+
+(defmd l2
+  (format *stream* "~t- ~a" value))
+
+(defmd l3
+  (format *stream* "~t~t- ~a" value))
+
+(defmd p
+  (format *stream* "~a" value))
 
 (defun format-md (md &optional stream)
   (let ((*stream* stream))
