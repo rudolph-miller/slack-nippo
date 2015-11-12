@@ -28,6 +28,7 @@
                  (:file "channel")
                  (:file "user")
                  (:file "message")
+                 (:file "markdown")
                  (:file "slack-nippo"))))
   :description ""
   :long-description

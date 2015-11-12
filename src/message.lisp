@@ -86,12 +86,13 @@
                           :short (assoc-value "short" attachment-field)))
 
 @export
-(defun get-messages (channel &key latest oldest count)
+(defun get-messages (channel &key latest oldest (count 100))
   (declare (ignore latest oldest))
   (let* ((channel-id (channel-id channel))
          (params (append `(("channel" . ,channel-id))
                          (when count
                            `(("count" . ,(write-to-string count))))))
-         (messages (assoc-value "messages" (fetch "/channels.history" params))))
+         (response (fetch "/channels.history" params))
+         (messages (assoc-value "messages" response)))
     (mapcar #'(lambda (message) (make-message message))
             messages)))

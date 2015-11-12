@@ -32,6 +32,10 @@
                       users)))))
 
 @export
+(defun reload-all-users ()
+  (get-all-users nil))
+
+@export
 (defun get-user (id)
   (find id (get-all-users)
         :key #'user-id
