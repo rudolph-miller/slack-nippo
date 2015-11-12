@@ -19,7 +19,8 @@
                :flexi-streams
                :dexador
                :jonathan
-               :anaphora)
+               :anaphora
+               :cl-ppcre)
   :components ((:module "src"
                 :serial t
                 :components
@@ -29,6 +30,8 @@
                  (:file "user")
                  (:file "message")
                  (:file "markdown")
+                 (:file "trello")
+                 (:file "format")
                  (:file "slack-nippo"))))
   :description ""
   :long-description

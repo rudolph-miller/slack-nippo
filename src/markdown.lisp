@@ -13,6 +13,7 @@
   ((value :reader value
           :initarg :value)))
 
+@export
 (defun make-md (type value)
   (make-instance type :value value))
 
@@ -22,6 +23,7 @@
 
 (defmacro defmd (type &body body)
   `(progn
+     @export
      (defclass ,type (md) ())
      (defmethod %format-md ((object ,type))
        (let ((value (value object)))
@@ -48,6 +50,7 @@
 (defmd p
   (format *stream* "~a" value))
 
+@export
 (defun format-md (md &optional stream)
   (let ((*stream* stream))
     (%format-md md)))
