@@ -5,7 +5,11 @@
         :annot.class
         :slack-nippo.util
         :slack-nippo.fetch
-        :slack-nippo.channel))
+        :slack-nippo.channel
+        :slack-nippo.user)
+  (:shadow :id
+           :name
+           :user))
 (in-package :slack-nippo.message)
 
 (syntax:use-syntax :annot)
@@ -26,7 +30,8 @@
   (%make-message :type (assoc-value "type" message)
                  :subtype (assoc-value "subtype" message)
                  :ts (assoc-value "ts" message)
-                 :user (assoc-value "user" message)
+                 :user (let ((id (assoc-value "user" message)))
+                         (get-user id))
                  :text (assoc-value "text" message)
                  :attachments (mapcar #'(lambda (attachment)
                                           (make-attachment attachment))
