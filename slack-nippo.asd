@@ -26,6 +26,7 @@
                 ((:file "util")
                  (:file "fetch")
                  (:file "channel")
+                 (:file "user")
                  (:file "message")
                  (:file "slack-nippo"))))
   :description ""

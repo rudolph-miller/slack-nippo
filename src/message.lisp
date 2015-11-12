@@ -61,9 +61,24 @@
                     :title (assoc-value "title" attachment)
                     :title-link (assoc-value "title_link" attachment)
                     :text (assoc-value "text" attachment)
-                    :fields (assoc-value "fields" attachment)
+                    :fields (mapcar #'(lambda (field)
+                                        (make-attachment-field field))
+                                    (assoc-value "fields" attachment))
                     :image-url (assoc-value "image_url" attachment)
                     :thumb-url (assoc-value "thumb_url" attachment)))
+
+@export
+@export-structure
+(defstruct (attachment-field (:constructor %make-attachment-field))
+  title
+  value
+  short)
+
+@export
+(defun make-attachment-field (attachment-field)
+  (%make-attachment-field :title (assoc-value "title" attachment-field)
+                          :value (assoc-value "value" attachment-field)
+                          :short (assoc-value "short" attachment-field)))
 
 @export
 (defun get-messages (channel &key latest oldest count)
