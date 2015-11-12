@@ -4,6 +4,4 @@
         :annot.doc))
 (in-package :slack-nippo)
 
-;; blah blah blah.
-
 (syntax:use-syntax :annot)

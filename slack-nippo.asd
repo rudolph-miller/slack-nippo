@@ -15,11 +15,16 @@
   :homepage "https://github.com/Rudolph-Miller/slack-nippo"
   :depends-on (:cl-syntax
                :cl-syntax-annot
-               :dexador)
+               :quri
+               :flexi-streams
+               :dexador
+               :jonathan
+               :anaphora)
   :components ((:module "src"
                 :serial t
                 :components
-                ((:file "fetch")
+                ((:file "util")
+                 (:file "fetch")
                  (:file "channel")
                  (:file "message")
                  (:file "slack-nippo"))))
