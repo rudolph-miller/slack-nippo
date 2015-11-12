@@ -13,11 +13,11 @@
 
 (syntax:use-syntax :annot)
 
-@export
 (defun task-p (message)
   (when (aand (car (message-attachments message))
               (scan "https://trello.com" (attachment-text it))
-              (equal (message-type message) "bot_message"))
+              (equal (message-type message) "message")
+              (equal (message-subtype message) "bot_message"))
     t))
 
 (defun split-url-and-title (url-and-title)
@@ -40,22 +40,22 @@
     (dolist (type +task-types+)
       (multiple-value-bind (match strings)
           (scan-to-strings (cdr type) text)
-        (when (and match (= (length strings) 1))
+        (when (and match
+                   (= (length strings) 1)
+                   (elt strings 0))
           (return-from detect-task-type
             (values (car type)
                     (split-url-and-title (elt strings 0)))))))))
 
+@export
 (defun partition-tasks (messages)
   (let (news dones)
     (dolist (message messages)
       (when (task-p message)
         (multiple-value-bind (type url-and-title)
             (detect-task-type message)
-          (unless url-and-title
-            (print type)
-            (print message))
           (case type
             (:new (push url-and-title news))
             (:done (push url-and-title dones))))))
-    (list :news news
-          :dones dones)))
+    (list :new news
+          :done dones)))

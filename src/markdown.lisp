@@ -30,25 +30,25 @@
          ,@body))))
 
 (defmd h1
-  (format *stream* "# ~a" value))
+  (format *stream* "~%# ~a~%~%" value))
 
 (defmd h2
-  (format *stream* "## ~a" value))
+  (format *stream* "~%## ~a~%~%" value))
 
 (defmd h3
-  (format *stream* "### ~a" value))
+  (format *stream* "~%### ~a~%~%" value))
 
-(defmd l1
-  (format *stream* "- ~a" value))
+(defmd li1
+  (format *stream* "- ~a~%" value))
 
-(defmd l2
-  (format *stream* "~t- ~a" value))
+(defmd li2
+  (format *stream* "~t- ~a~%" value))
 
-(defmd l3
-  (format *stream* "~t~t- ~a" value))
+(defmd li3
+  (format *stream* "~t~t- ~a~%" value))
 
 (defmd p
-  (format *stream* "~a" value))
+  (format *stream* "~a~%" value))
 
 @export
 (defun format-md (md &optional stream)
