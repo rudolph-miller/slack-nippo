@@ -8,49 +8,32 @@
 (syntax:use-syntax :annot)
 
 @export
-@export-class
-(defclass md ()
-  ((value :reader value
-          :initarg :value)))
-
-@export
-(defun make-md (type value)
-  (make-instance type :value value))
-
 (defparameter *stream* nil)
 
-(defgeneric %format-md (md))
-
-(defmacro defmd (type &body body)
-  `(progn
-     @export
-     (defclass ,type (md) ())
-     (defmethod %format-md ((object ,type))
-       (let ((value (value object)))
-         ,@body))))
-
-(defmd h1
+@export
+(defun h1 (value)
   (format *stream* "~%# ~a~%~%" value))
 
-(defmd h2
+@export
+(defun h2 (value)
   (format *stream* "~%## ~a~%~%" value))
 
-(defmd h3
+@export
+(defun h3 (value)
   (format *stream* "~%### ~a~%~%" value))
 
-(defmd li1
+@export
+(defun li1 (value)
   (format *stream* "- ~a~%" value))
 
-(defmd li2
+@export
+(defun li2 (value)
   (format *stream* "~t- ~a~%" value))
 
-(defmd li3
+@export
+(defun li3 (value)
   (format *stream* "~t~t- ~a~%" value))
 
-(defmd p
-  (format *stream* "~a~%" value))
-
 @export
-(defun format-md (md &optional stream)
-  (let ((*stream* stream))
-    (%format-md md)))
+(defun p (value)
+  (format *stream* "~a~%" value))

@@ -13,45 +13,37 @@
 
 (syntax:use-syntax :annot)
 
-(defparameter *stream* *standard-output*)
-
-(defun %format-md (md)
-  (format-md md *stream*))
-  
 (defun format-message (message)
   (let* ((user-name (user-name (message-user message)))
          (text (message-text message))
          (content (if (find #\Newline text)
                       (format nil "~a: ~%~%~a~%" user-name text)
-                      (format nil "~a: ~a" user-name text)))
-         (md (make-md 'li1 content)))
-    (%format-md md)))
+                      (format nil "~a: ~a" user-name text))))
+    (li1 content)))
 
-@export
-(defun format-messages (messages)
+(defun format-tasks (messages)
   (let ((tasks (partition-tasks messages)))
-    (%format-md (make-md 'h1 "Tasks"))
+    (h1 "Tasks")
 
     (let ((new (getf tasks :new)))
-      (%format-md (make-md 'h2 "New"))
+      (h2 "New")
 
       (unless new (%format-md (make-md 'p "No New Tasks")))
 
       (dolist (task new)
-        (%format-md (make-md 'li1
-                            (format nil "[~a](~a)" (cdr task) (car task))))))
-      
-    (let ((done (getf tasks :done)))
-      (%format-md (make-md 'h2 "Done"))
+        (li1 (format nil "[~a](~a)" (cdr task) (car task)))))
 
-      (unless done (%format-md (make-md 'p "No Done Tasks")))
+    (let ((done (getf tasks :done)))
+      (h2 "Done")
+
+      (unless done (p "No Done Tasks"))
 
       (dolist (task done)
-        (%format-md (make-md 'li1
-                            (format nil "[~a](~a)" (cdr task) (car task)))))))
-  
-  (%format-md (make-md 'h1 "Log"))
-                      
+        (li1 (format nil "[~a](~a)" (cdr task) (car task)))))))
+
+(defun format-logs (messages)
+  (h1 "Logs")
+
   (dolist (message (reverse messages))
     (when (equal (message-type message) "message")
       (let ((subtype (message-subtype message)))
@@ -59,3 +51,9 @@
           ((null subtype)
            (format-message message)))))))
 
+
+@export
+(defun format-messages (messages &optional (stream t))
+  (let ((*stream* stream))
+    (format-tasks messages)
+    (format-logs messages)))
