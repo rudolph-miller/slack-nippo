@@ -148,7 +148,10 @@
 
 (defparameter +card-types+
   (list (cons :new "New card \"(.*)\" added to list \".*|To Do\"")
-        (cons :done "Card moved: \"(.*)\" from list \"Doing\" to list \"Done\"")))
+        (cons :doing "Card moved: \"(.*)\" from list \"To Do\" to list \"Doing\"")
+        (cons :pending "Card moved: \"(.*)\" from list \"Doing\" to list \"To Do\"")
+        (cons :revert "Card moved: \"(.*)\" from list \"Done\" to list \"To Do\"")
+        (cons :done "Card moved: \"(.*)\" from list \".*\" to list \"Done\"")))
 
 @export
 (defun card-event-message-p (message)
@@ -171,7 +174,7 @@
           (when (and match
                      (= (length strings) 1))
             (let ((id (elt strings 0)))
-              (values id url name))))))))
+              (values id name url))))))))
 
 @export
 (defun extract-card-event (message)
