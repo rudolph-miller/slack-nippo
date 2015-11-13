@@ -30,9 +30,9 @@
          (all (getf cards :all))
          (new (getf cards :new))
          (done (getf cards :done)))
-    (h1 "Cards")
+    (h1 "Tasks")
 
-    (h2 "All")
+    (h2 "To Do")
     (unless all (p "No Cards"))
     (dolist (card all)
       (li1

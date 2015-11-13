@@ -123,6 +123,7 @@
           (push new-card *cards*)
           new-card))))
 
+@export
 (defun get-cards (list-or-name board)
   (let* ((list (etypecase list-or-name
                  (string (get-list list-or-name board))

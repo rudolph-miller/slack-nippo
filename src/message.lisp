@@ -8,7 +8,8 @@
         :slack-nippo.channel
         :slack-nippo.user)
   (:import-from :local-time
-                :unix-to-timestamp)
+                :unix-to-timestamp
+                :timestamp-to-unix)
   (:shadow :id
            :name
            :user))
@@ -91,13 +92,19 @@
                           :value (assoc-value "value" attachment-field)
                           :short (assoc-value "short" attachment-field)))
 
+(defun format-ts (timestamp)
+  (format nil "~a.000000" (timestamp-to-unix timestamp)))
+
 @export
 (defun get-messages (channel &key latest oldest (count 100))
-  (declare (ignore latest oldest))
   (let* ((channel-id (channel-id channel))
          (params (append `(("channel" . ,channel-id))
                          (when count
-                           `(("count" . ,(write-to-string count))))))
+                           `(("count" . ,(write-to-string count))))
+                         (when latest
+                           `(("latest" . ,(format-ts latest))))
+                         (when oldest
+                           `(("oldest" . ,(format-ts oldest))))))
          (response (fetch "/channels.history" params))
          (messages (assoc-value "messages" response)))
     (mapcar #'make-message messages)))
