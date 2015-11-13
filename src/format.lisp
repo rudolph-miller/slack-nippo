@@ -6,40 +6,47 @@
         :slack-nippo.message
         :slack-nippo.markdown
         :slack-nippo.trello)
-  (:shadow :user)
+  (:shadow :user
+           :id
+           :task)
   (:shadowing-import-from :slack-nippo.message
                           :value))
 (in-package :slack-nippo.format)
 
 (syntax:use-syntax :annot)
 
-(defun format-message (message)
+(defun format-task-events (messages)
+  (let* ((tasks (extract-tasks messages))
+         (all (getf tasks :all))
+         (new (getf tasks :new))
+         (done (getf tasks :done)))
+    (h1 "Tasks")
+
+    (h2 "All")
+    (unless all (p "No Tasks"))
+    (dolist (task all)
+      (li1
+       (if (find-task task done)
+           (format nil "~~~~[~a](~a)~~~~" (task-url task) (task-title task))
+           (format nil "[~a](~a)" (task-url task) (task-title task)))))
+
+    (h2 "New")
+    (unless new (p "No New Tasks"))
+    (dolist (task new)
+      (li1 (format nil "[~a](~a)" (task-url task) (task-title task))))
+
+    (h2 "Done")
+    (unless done (p "No Done Tasks"))
+    (dolist (task done)
+      (li1 (format nil "[~a](~a)" (task-url task) (task-title task))))))
+
+(defun format-log (message)
   (let* ((user-name (user-name (message-user message)))
          (text (message-text message))
          (content (if (find #\Newline text)
                       (format nil "~a: ~%~%~a~%" user-name text)
                       (format nil "~a: ~a" user-name text))))
     (li1 content)))
-
-(defun format-tasks (messages)
-  (let ((tasks (partition-tasks messages)))
-    (h1 "Tasks")
-
-    (let ((new (getf tasks :new)))
-      (h2 "New")
-
-      (unless new (%format-md (make-md 'p "No New Tasks")))
-
-      (dolist (task new)
-        (li1 (format nil "[~a](~a)" (cdr task) (car task)))))
-
-    (let ((done (getf tasks :done)))
-      (h2 "Done")
-
-      (unless done (p "No Done Tasks"))
-
-      (dolist (task done)
-        (li1 (format nil "[~a](~a)" (cdr task) (car task)))))))
 
 (defun format-logs (messages)
   (h1 "Logs")
@@ -49,11 +56,11 @@
       (let ((subtype (message-subtype message)))
         (cond
           ((null subtype)
-           (format-message message)))))))
+           (format-log message)))))))
 
 
 @export
 (defun format-messages (messages &optional (stream t))
   (let ((*stream* stream))
-    (format-tasks messages)
+    (format-task-events messages)
     (format-logs messages)))
