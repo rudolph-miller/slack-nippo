@@ -20,7 +20,8 @@
                :dexador
                :jonathan
                :anaphora
-               :cl-ppcre)
+               :cl-ppcre
+               :local-time)
   :components ((:module "src"
                 :serial t
                 :components

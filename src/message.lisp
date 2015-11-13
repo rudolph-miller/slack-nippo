@@ -7,6 +7,8 @@
         :slack-nippo.fetch
         :slack-nippo.channel
         :slack-nippo.user)
+  (:import-from :local-time
+                :unix-to-timestamp)
   (:shadow :id
            :name
            :user))
@@ -25,11 +27,16 @@
   attachments
   starred-p)
 
+(defun parse-ts (timestamp)
+  (let ((integer (parse-integer timestamp :end (position #\. timestamp))))
+    (when integer
+      (unix-to-timestamp integer))))
+
 @export
 (defun make-message (message)
   (%make-message :type (assoc-value "type" message)
                  :subtype (assoc-value "subtype" message)
-                 :ts (assoc-value "ts" message)
+                 :ts (parse-ts (assoc-value "ts" message))
                  :user (let ((id (assoc-value "user" message)))
                          (get-user id))
                  :text (assoc-value "text" message)

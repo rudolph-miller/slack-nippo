@@ -15,6 +15,12 @@
 
 (syntax:use-syntax :annot)
 
+@export
+@doc
+"In seconds"
+(defparameter +hourly-index-interval+
+  (* 60 60 3))
+
 (defun format-card-events (messages)
   (let* ((cards (extract-cards messages))
          (all (getf cards :all))
