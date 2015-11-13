@@ -66,8 +66,7 @@
                     :title (assoc-value "title" attachment)
                     :title-link (assoc-value "title_link" attachment)
                     :text (assoc-value "text" attachment)
-                    :fields (mapcar #'(lambda (field)
-                                        (make-attachment-field field))
+                    :fields (mapcar #'make-attachment-field
                                     (assoc-value "fields" attachment))
                     :image-url (assoc-value "image_url" attachment)
                     :thumb-url (assoc-value "thumb_url" attachment)))
@@ -94,5 +93,4 @@
                            `(("count" . ,(write-to-string count))))))
          (response (fetch "/channels.history" params))
          (messages (assoc-value "messages" response)))
-    (mapcar #'(lambda (message) (make-message message))
-            messages)))
+    (mapcar #'make-message messages)))

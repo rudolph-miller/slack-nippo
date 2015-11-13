@@ -21,8 +21,7 @@
 
 (defun get-all-channels ()
   (let ((channels (assoc-value "channels" (fetch "/channels.list"))))
-    (mapcar #'(lambda (channel) (make-channel channel))
-            channels)))
+    (mapcar #'make-channel channels)))
 
 @export
 (defun get-channel (name)

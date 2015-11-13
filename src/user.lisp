@@ -28,8 +28,7 @@
       *users*
       (let ((users (assoc-value "members" (fetch "/users.list"))))
         (setf *users*
-              (mapcar #'(lambda (user) (make-user user))
-                      users)))))
+              (mapcar #'make-user users)))))
 
 @export
 (defun reload-all-users ()

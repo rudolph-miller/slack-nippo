@@ -8,37 +8,37 @@
         :slack-nippo.trello)
   (:shadow :user
            :id
-           :task)
+           :name)
   (:shadowing-import-from :slack-nippo.message
                           :value))
 (in-package :slack-nippo.format)
 
 (syntax:use-syntax :annot)
 
-(defun format-task-events (messages)
-  (let* ((tasks (extract-tasks messages))
-         (all (getf tasks :all))
-         (new (getf tasks :new))
-         (done (getf tasks :done)))
-    (h1 "Tasks")
+(defun format-card-events (messages)
+  (let* ((cards (extract-cards messages))
+         (all (getf cards :all))
+         (new (getf cards :new))
+         (done (getf cards :done)))
+    (h1 "Cards")
 
     (h2 "All")
-    (unless all (p "No Tasks"))
-    (dolist (task all)
+    (unless all (p "No Cards"))
+    (dolist (card all)
       (li1
-       (if (find-task task done)
-           (format nil "~~~~[~a](~a)~~~~" (task-url task) (task-title task))
-           (format nil "[~a](~a)" (task-url task) (task-title task)))))
+       (if (find-card card done)
+           (format nil "~~~~[~a](~a)~~~~" (card-url card) (card-name card))
+           (format nil "[~a](~a)" (card-url card) (card-name card)))))
 
     (h2 "New")
-    (unless new (p "No New Tasks"))
-    (dolist (task new)
-      (li1 (format nil "[~a](~a)" (task-url task) (task-title task))))
+    (unless new (p "No New Cards"))
+    (dolist (card new)
+      (li1 (format nil "[~a](~a)" (card-url card) (card-name card))))
 
     (h2 "Done")
-    (unless done (p "No Done Tasks"))
-    (dolist (task done)
-      (li1 (format nil "[~a](~a)" (task-url task) (task-title task))))))
+    (unless done (p "No Done Cards"))
+    (dolist (card done)
+      (li1 (format nil "[~a](~a)" (card-url card) (card-name card))))))
 
 (defun format-log (message)
   (let* ((user-name (user-name (message-user message)))
@@ -62,5 +62,5 @@
 @export
 (defun format-messages (messages &optional (stream t))
   (let ((*stream* stream))
-    (format-task-events messages)
+    (format-card-events messages)
     (format-logs messages)))

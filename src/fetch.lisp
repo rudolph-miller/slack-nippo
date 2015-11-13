@@ -28,7 +28,7 @@
     (setf (uri-query-params uri) parameters)
     (let ((response
             (jojo:parse
-             (flexi-streams:octets-to-string
+             (babel:octets-to-string
               (dex:get (render-uri uri) :force-binary t))
              :as :alist)))
       (if (aand (assoc-value "ok" response) it)

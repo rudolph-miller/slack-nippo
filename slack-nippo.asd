@@ -16,7 +16,7 @@
   :depends-on (:cl-syntax
                :cl-syntax-annot
                :quri
-               :flexi-streams
+               :babel
                :dexador
                :jonathan
                :anaphora
