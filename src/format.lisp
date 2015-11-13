@@ -6,6 +6,10 @@
         :slack-nippo.message
         :slack-nippo.markdown
         :slack-nippo.trello)
+  (:import-from :local-time
+                :timestamp-to-unix
+                :unix-to-timestamp
+                :format-timestring)
   (:shadow :user
            :id
            :name)
@@ -76,9 +80,19 @@
 
 (defun format-logs (messages)
   (h1 "Logs")
-  (dolist (message (reverse messages))
-    (when (equal (message-type message) "message")
-      (format-log message))))
+  (let ((current-round 0))
+    (dolist (message (reverse messages))
+      (when (equal (message-type message) "message")
+        (let* ((timestamp (message-ts message))
+               (round (truncate (timestamp-to-unix timestamp)
+                                +hourly-index-interval+)))
+          (when (> round current-round)
+            (setf current-round round)
+            (h2 (format-timestring
+                 nil
+                 (unix-to-timestamp (* current-round +hourly-index-interval+))
+                 :format '((:hour 2 #\0) (:min 2 #\0)))))
+          (format-log message))))))
 
 @export
 (defun format-messages (messages &optional (stream t))
