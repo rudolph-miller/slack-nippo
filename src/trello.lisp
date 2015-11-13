@@ -27,6 +27,7 @@
 
 (defparameter +endpoint+ "https://trello.com/1")
 
+@export
 (defparameter *cards* nil)
 
 (defun fetch-trello (path &optional additional-parameters)
