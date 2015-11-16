@@ -10,6 +10,8 @@
                 :timestamp-to-unix
                 :unix-to-timestamp
                 :format-timestring)
+  (:import-from :cl-ppcre
+                :scan-to-strings)
   (:shadow :user
            :id
            :name)
@@ -68,10 +70,21 @@
 (defun format-message-log (message)
   (let* ((user-name (user-name (message-user message)))
          (text (message-text message))
-         (content (if (find #\Newline text)
-                      (format nil "~a: ~%~%~a~%" user-name text)
-                      (format nil "~a: ~a" user-name text))))
-    (li1 content)))
+         (image-url (extract-image-url text))
+         (content (cond
+                    (image-url
+                     (format nil "![](~a)" image-url))
+                    ((find #\Newline text)
+                     (format nil "~%~%~a~%" text))
+                    (t (format nil "~a" text)))))
+    (li1 (format nil "~a: ~a" user-name content))))
+
+(defun extract-image-url (text)
+  (multiple-value-bind (match strings)
+      (scan-to-strings "<(.*\.[png|jpg|jpeg|gif])>" text)
+    (when (and match
+               (= (length strings) 1))
+      (elt strings 0))))
 
 (defun format-log (message)
   (cond
