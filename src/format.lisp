@@ -70,26 +70,41 @@
 (defun format-message-log (message)
   (let* ((user-name (user-name (message-user message)))
          (text (message-text message))
-         (image-url (extract-image-url text))
+         (image-name-and-url (extract-image-name-and-url message))
          (content (cond
-                    (image-url
-                     (format nil "![](~a)" image-url))
+                    (image-name-and-url
+                     (format nil "![~a](~a)"
+                             (car image-name-and-url)
+                             (cdr image-name-and-url)))
                     ((find #\Newline text)
                      (format nil "~%~%~a~%" text))
                     (t (format nil "~a" text)))))
     (li1 (format nil "~a: ~a" user-name content))))
 
-(defun extract-image-url (text)
-  (multiple-value-bind (match strings)
-      (scan-to-strings "<(.*\.[png|jpg|jpeg|gif])>" text)
-    (when (and match
-               (= (length strings) 1))
-      (elt strings 0))))
+(defun extract-image-name-and-url (message)
+  (let ((text (message-text message)))
+    (cond
+      ((equal (message-subtype message) "file_share")
+       (multiple-value-bind (match strings)
+           (scan-to-strings "<@.*\\|.*> uploaded a file: <(.*\.[png|jpg|jpeg|gif])\\|(.*\.[png|jpg|jpeg|gif])>" text)
+         (when (and match
+                    (= (length strings) 2))
+           (cons (elt strings 1)
+                 (elt strings 0)))))
+      (t
+       (multiple-value-bind (match strings)
+           (scan-to-strings "<(.*\.[png|jpg|jpeg|gif])>" text)
+         (when (and match
+                    (= (length strings) 1))
+           (cons "Image"
+                 (elt strings 0))))))))
 
 (defun format-log (message)
   (cond
     ((card-event-message-p message) (format-trello-log message))
-    ((null (message-subtype message)) (format-message-log message))))
+    ((or (equal (message-subtype message) "file_share")
+         (null (message-subtype message)))
+     (format-message-log message))))
 
 (defun format-logs (messages)
   (h1 "Logs")
