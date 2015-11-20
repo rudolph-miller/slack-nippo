@@ -26,13 +26,14 @@
 
 (defparameter *nippo-hour* 5)
 
-(defun make-nippo (channel-name &key (date (today)) (stream t))
+(defun make-nippo (channel-name &key (date (now)) (stream t))
   (setq *cards* nil)
   (get-cards "To Do" "Task")
   (let* ((date (clone-timestamp date))
          (offset (subzone-offset
                   (elt (timezone-subzones *default-timezone*) 0)))
-         (today (progn (setf (nsec-of date) 0)
+         (today (progn (setq date (timestamp+ date offset :sec))
+                       (setf (nsec-of date) 0)
                        (setf (sec-of date) 0)
                        (timestamp- date offset :sec)))
          (oldest (timestamp+ today *nippo-hour* :hour))
